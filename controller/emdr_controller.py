@@ -23,8 +23,8 @@ class MyThorpyApp(thorpy.Application):
             os.environ['SDL_VIDEO_CENTERED'] = '1'
         self.set_icon(icon)
         
-        # Set the screen to fullscreen by default
-        screen = pygame.display.set_mode(self.size, pygame.FULLSCREEN | flags)
+        # Set the screen to fullscreen with resizing
+        screen = pygame.display.set_mode(self.size, pygame.FULLSCREEN | pygame.RESIZABLE | flags)
         
         if self.caption:
             pygame.display.set_caption(caption)
@@ -33,7 +33,6 @@ class MyThorpyApp(thorpy.Application):
         self.default_path = "./"
 
     def run(self):
-        # Event loop to handle quitting the application
         running = True
         while running:
             for event in pygame.event.get():
@@ -42,12 +41,15 @@ class MyThorpyApp(thorpy.Application):
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:  # Press Escape to exit fullscreen
                         running = False
+                elif event.type == pygame.VIDEORESIZE:
+                    self.size = event.size
+                    pygame.display.set_mode(self.size, pygame.RESIZABLE)
+                    self.update_layout()  # Recalculate button sizes/positions
 
-            # Add additional drawing or application logic here
-            pygame.display.update()  # Update the screen
+            pygame.display.update()
 
-        pygame.quit()  # Quit Pygame
-
+        pygame.quit()
+        
 class Selector(Container):
 
     def __init__(self, x, y, title, values, format, btn_plus, btn_minus, updater=None, cyclic=False):
