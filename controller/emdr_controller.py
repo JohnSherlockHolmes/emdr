@@ -165,7 +165,61 @@ class Switch():
             self.updater()
 
 class Controller:
+    ##adding shit##
+    def __init__(self, fullscreen=False, touchscreen=False):
+        self.app = MyThorpyApp(size=(800, 600), caption="EMDR Controller", icon='pygame', flags=pygame.FULLSCREEN if fullscreen else 0)
+        
+        # Example for scaling buttons
+        self.buttons = []
+        self.create_buttons()
+        self.exit_button = self.button(3, 3, 'Exit', self.exit_click)
 
+        self.back = thorpy.Background.make((255, 255, 255), elements=self.buttons + [self.exit_button])
+        self.menu = thorpy.Menu(self.back)
+
+    def create_buttons(self):
+        width, height = self.app.size
+        button_width, button_height = width // 10, height // 20
+
+        # Example: Adjust button size and position based on window size
+        self.buttons.append(self.button(0, 0, 'Play', self.start_click, button_width, button_height))
+        self.buttons.append(self.button(1, 0, 'Pause', self.pause_click, button_width, button_height))
+
+    def button(self, x, y, title, callback=None, width=100, height=50):
+        btn = thorpy.Clickable(title)
+        btn.set_size((width, height))
+        btn.set_center_pos((x * width + width // 2, y * height + height // 2))
+        btn.user_func = callback
+        btn.finish()
+        return btn
+
+    def update_layout(self):
+        """Update button sizes and positions on window resize."""
+        width, height = self.app.size
+        button_width, button_height = width // 10, height // 20
+
+        for i, btn in enumerate(self.buttons):
+            btn.set_size((button_width, button_height))
+            btn.set_center_pos((i * button_width + button_width // 2, button_height // 2))
+
+    def exit_click(self):
+        """Exit the application."""
+        pygame.quit()
+        sys.exit()
+
+    def start_click(self):
+        print("Start button clicked")
+
+    def pause_click(self):
+        print("Pause button clicked")
+
+    def run(self):
+        self.app.run()
+
+if __name__ == "__main__":
+    controller = Controller(fullscreen=True)
+    controller.run()
+##extent of shit##
     def button(self, x, y, title, callback=None, togglable=False):
         try:
             painter = thorpy.painters.imageframe.ButtonImage(
@@ -608,57 +662,4 @@ def main(argv):
 if __name__ == '__main__':
     main(sys.argv[1:])
 
-class Controller:
-    def __init__(self, fullscreen=False, touchscreen=False):
-        self.app = MyThorpyApp(size=(800, 600), caption="EMDR Controller", icon='pygame', flags=pygame.FULLSCREEN if fullscreen else 0)
-        
-        # Example for scaling buttons
-        self.buttons = []
-        self.create_buttons()
-        self.exit_button = self.button(3, 3, 'Exit', self.exit_click)
 
-        self.back = thorpy.Background.make((255, 255, 255), elements=self.buttons + [self.exit_button])
-        self.menu = thorpy.Menu(self.back)
-
-    def create_buttons(self):
-        width, height = self.app.size
-        button_width, button_height = width // 10, height // 20
-
-        # Example: Adjust button size and position based on window size
-        self.buttons.append(self.button(0, 0, 'Play', self.start_click, button_width, button_height))
-        self.buttons.append(self.button(1, 0, 'Pause', self.pause_click, button_width, button_height))
-
-    def button(self, x, y, title, callback=None, width=100, height=50):
-        btn = thorpy.Clickable(title)
-        btn.set_size((width, height))
-        btn.set_center_pos((x * width + width // 2, y * height + height // 2))
-        btn.user_func = callback
-        btn.finish()
-        return btn
-
-    def update_layout(self):
-        """Update button sizes and positions on window resize."""
-        width, height = self.app.size
-        button_width, button_height = width // 10, height // 20
-
-        for i, btn in enumerate(self.buttons):
-            btn.set_size((button_width, button_height))
-            btn.set_center_pos((i * button_width + button_width // 2, button_height // 2))
-
-    def exit_click(self):
-        """Exit the application."""
-        pygame.quit()
-        sys.exit()
-
-    def start_click(self):
-        print("Start button clicked")
-
-    def pause_click(self):
-        print("Pause button clicked")
-
-    def run(self):
-        self.app.run()
-
-if __name__ == "__main__":
-    controller = Controller(fullscreen=True)
-    controller.run()
