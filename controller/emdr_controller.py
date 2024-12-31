@@ -13,7 +13,7 @@ PROBE_EVENT = pygame.USEREVENT + 1
 ACTION_EVENT = pygame.USEREVENT + 2
 
 class MyThorpyApp(thorpy.Application):
-    def __init__(self, caption=None, icon="thorpy", center=True, flags=0):
+    def __init__(self, caption=None, icon="thorpy", center=True):
         global _SCREEN, _CURRENT_APPLICATION
         _CURRENT_APPLICATION = self
         pygame.init()
@@ -22,7 +22,7 @@ class MyThorpyApp(thorpy.Application):
         self.set_icon(icon)
         # Use the current display resolution for full-screen mode
         self.size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
-        screen = pygame.display.set_mode(self.size, pygame.FULLSCREEN | flags)
+        screen = pygame.display.set_mode(self.size, pygame.FULLSCREEN)
         if caption:
             pygame.display.set_caption(caption)
         _SCREEN = screen
@@ -155,8 +155,18 @@ class Controller:
         self.stopping = False
         if touchscreen:
             pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
-        self.app = MyThorpyApp(caption="EMDR Controller", icon='pygame', flags=pygame.FULLSCREEN if fullscreen else 0)
+        self.app = MyThorpyApp(caption="EMDR Controller", icon='pygame')
         self.screen_width, self.screen_height = self.app.size
+        self.create_ui_elements()
+        self.config_mode()
+        self.reset_action()
+        self.activate(self.btn_lightbar)
+        self.deactivate(self.btn_lightbar)
+        self.activate(self.btn_buzzer)
+        self.deactivate(self.btn_buzzer)
+        self.check_usb(None)
+
+    def create_ui_elements(self):
         self.btn_start = self.button(0, 0, 'Play', self.start_click)
         self.btn_start24 = self.button(1, 0, 'Play24', self.start24_click)
         self.btn_stop = self.button(2, 0, 'Stop', self.stop_click)
@@ -255,13 +265,6 @@ class Controller:
         self.back.add_reaction(thorpy.Reaction(reacts_to=PROBE_EVENT, reac_func=self.check_usb))
         self.back.add_reaction(thorpy.Reaction(reacts_to=ACTION_EVENT, reac_func=self.action))
         self.menu = thorpy.Menu(self.back)
-        self.config_mode()
-        self.reset_action()
-        self.activate(self.btn_lightbar)
-        self.deactivate(self.btn_lightbar)
-        self.activate(self.btn_buzzer)
-        self.deactivate(self.btn_buzzer)
-        self.check_usb(None)
 
     def button(self, x, y, title, callback=None, togglable=False):
         try:
@@ -294,4 +297,3 @@ class Controller:
         # Scale position based on screen size
         btn.set_center_pos((self.screen_width // 6 + self.screen_width // 3 * x, self.screen_height // 8 + self.screen_height // 4 * y))
         return btn
-        thorpy.make_image_button()
