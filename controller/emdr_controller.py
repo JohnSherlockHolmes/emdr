@@ -13,11 +13,9 @@ PROBE_EVENT = pygame.USEREVENT + 1
 ACTION_EVENT = pygame.USEREVENT + 2
 
 class MyThorpyApp(thorpy.Application):
-    def __init__(self, size, caption=None, icon="thorpy", center=True, flags=0):
+    def __init__(self, caption=None, icon="thorpy", center=True, flags=0):
         global _SCREEN, _CURRENT_APPLICATION
         _CURRENT_APPLICATION = self
-        self.size = tuple(size)
-        self.caption = caption
         pygame.init()
         if center:
             os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -25,7 +23,7 @@ class MyThorpyApp(thorpy.Application):
         # Use the current display resolution for full-screen mode
         self.size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
         screen = pygame.display.set_mode(self.size, pygame.FULLSCREEN | flags)
-        if self.caption:
+        if caption:
             pygame.display.set_caption(caption)
         _SCREEN = screen
         self.default_path = "./"
@@ -151,13 +149,13 @@ class Switch():
             self.updater()
 
 class Controller:
-    def __init__(self, fullscreen=False, touchscreen=False):
+    def __init__(self, fullscreen=True, touchscreen=False):
         self.in_load = False
         self.pausing = False
         self.stopping = False
         if touchscreen:
             pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
-        self.app = MyThorpyApp(size=(pygame.display.Info().current_w, pygame.display.Info().current_h), caption="EMDR Controller", icon='pygame', flags=pygame.FULLSCREEN if fullscreen else 0)
+        self.app = MyThorpyApp(caption="EMDR Controller", icon='pygame', flags=pygame.FULLSCREEN if fullscreen else 0)
         self.screen_width, self.screen_height = self.app.size
         self.btn_start = self.button(0, 0, 'Play', self.start_click)
         self.btn_start24 = self.button(1, 0, 'Play24', self.start24_click)
